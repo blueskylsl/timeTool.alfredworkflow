@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.esen.TimeTool</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>63F60794-BB56-4415-9372-BAF974C3A7E1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>44255A9A-6DFF-42BD-816D-51FA054C3D4B</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>EB52D0D7-F061-4D32-99FA-C22395CEB8FF</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>blueskylsl</string>
+	<key>description</key>
+	<string>获取时间、时间戳、格式化时间</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>timeTool</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>time</string>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>正在解析中...</string>
+				<key>script</key>
+				<string>require_once('workflows.php');
+$wf = new Workflows();
+
+if($wf-&gt;isDev()) {
+  if($wf-&gt;isCli())
+      $orig = $argv[1];
+    else
+        $orig = $_GET['query'];
+} else
+    $orig = "{query}";
+
+function genVarTimeFormat(Workflows $wf,$timestamp,$icon){
+    $timestampArr = explode('.',$timestamp);
+    $decimals = substr(trim($timestampArr[1],'0'),0,3);
+    $decimals&amp;&amp;($decimals = '.'.$decimals);
+    $str = date('Y-m-d H:i:s',$timestampArr[0]).$decimals;
+    $wf-&gt;result( $timestamp.uniqid(), $str, $str,'', $icon);
+    $str = date('l,d-M-Y H:i:s',$timestampArr[0]).$decimals;
+    $wf-&gt;result( $timestamp.uniqid(), $str, $str,'', $icon);
+}
+
+function error(Workflows $wf,$tip,$icon = 'icon.png'){
+    $wf-&gt;result( time().uniqid(), $tip, $tip,'$desc', $icon);
+}
+
+$error = error_get_last();
+
+//var_dump($orig);die();
+$orig = trim($orig);
+$len = strlen($orig);
+$icon = 'icon.png';
+if(empty($orig)||($orig=='now')){
+    $arr = explode(' ',microtime());
+    $timestamp = time();
+    $wf-&gt;result( $timestamp.uniqid(), $timestamp, $timestamp,'当前时间戳', $icon);
+    $timestamp = $timestamp.trim($arr[0],'0');
+    genVarTimeFormat($wf,$timestamp,$icon);
+}elseif(preg_match('/^1[45]\d{7}/',$orig)){
+    $timestamp = $orig;
+    genVarTimeFormat($wf,$timestamp,$icon);
+}elseif(preg_match('/^1[45]\d{10}/',$orig)){
+    $timestamp = $orig/1000.0;
+    genVarTimeFormat($wf,$timestamp,$icon);
+}else{
+    $timestamp = strtotime($orig);
+    if(!empty($timestamp)){
+        $wf-&gt;result( $timestamp.uniqid(), $timestamp, $timestamp,'时间戳', $icon);
+        $timestamp = $timestamp.trim($arr[0],'0');
+        genVarTimeFormat($wf,$timestamp,$icon);
+    }
+}
+
+$results = $wf-&gt;results();
+if ( count( $results ) == 0 ):
+    $wf-&gt;result('noresult'.uniqid(), $orig, '', '参数不对,无法对'.$orig.'完成对应解析', $icon );
+endif;
+
+echo $wf-&gt;toxml();</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>可以输入时间戳或时间完成自动转换，Cmd+回车复制到粘贴板</string>
+				<key>title</key>
+				<string>时间格式/时间戳转换</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>63F60794-BB56-4415-9372-BAF974C3A7E1</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>44255A9A-6DFF-42BD-816D-51FA054C3D4B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>EB52D0D7-F061-4D32-99FA-C22395CEB8FF</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>方便的获取时间、时间戳、格式化时间</string>
+	<key>uidata</key>
+	<dict>
+		<key>44255A9A-6DFF-42BD-816D-51FA054C3D4B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>390</integer>
+			<key>ypos</key>
+			<integer>60</integer>
+		</dict>
+		<key>63F60794-BB56-4415-9372-BAF974C3A7E1</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>EB52D0D7-F061-4D32-99FA-C22395CEB8FF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>220</integer>
+		</dict>
+	</dict>
+	<key>version</key>
+	<string>1.0</string>
+	<key>webaddress</key>
+	<string>http://lishenglan.cn</string>
+</dict>
+</plist>
