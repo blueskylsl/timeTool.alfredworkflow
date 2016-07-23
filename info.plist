@@ -178,7 +178,9 @@ echo $wf-&gt;toxml();</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>方便的获取时间、时间戳、格式化时间</string>
+    <string>方便的获取时间、时间戳、格式化时间
+详细说明请参考
+https://github.com/blueskylsl/timeTool.alfredworkflow/blob/master/README.md</string>
 	<key>uidata</key>
 	<dict>
 		<key>44255A9A-6DFF-42BD-816D-51FA054C3D4B</key>

@@ -3,4 +3,4 @@
 #生成workflow文件
 
 name=`cat info.plist|tr '\n' ' '|grep -oE '<key>name<\/key>.*?<string>.*?</string>'| perl -nle 'print $& if m/(?<=string>).*(?=<\/str)/;' |tr ' ' '_'`
-zip -r $name.alfredworkflow ./* 1>/dev/null
+zip -r $name.alfredworkflow ./* -x "Screenshots/*" 1>/dev/null
